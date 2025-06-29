@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipal Waste Classification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #764ba2;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23228B22" width="1200" height="800"/><path fill="%234682B4" d="M0 600h1200v200H0z"/><circle fill="%23FFD700" cx="200" cy="150" r="50"/><rect fill="%238B4513" x="100" y="400" width="200" height="100"/><rect fill="%23D2B48C" x="300" y="450" width="150" height="80"/><rect fill="%23696969" x="500" y="420" width="100" height="60"/><circle fill="%23FF6347" cx="700" cy="480" r="30"/><rect fill="%234169E1" x="800" y="440" width="80" height="70"/><polygon fill="%2332CD32" points="950,500 1000,450 1050,500 1000,520"/></svg>') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: transparent;
+            color: white;
+            text-decoration: none;
+            border: 2px solid white;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: white;
+            color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Page Sections */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* About Section */
+        .about {
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-label {
+            color: #764ba2;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .about h2 {
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            color: #333;
+        }
+
+        .about h2 .highlight {
+            color: #764ba2;
+        }
+
+        .about-intro {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .about-features {
+            list-style: none;
+        }
+
+        .about-features li {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+            position: relative;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .about-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .learn-more-btn {
+            background: #764ba2;
+            color: white;
+            border: 2px solid #764ba2;
+            margin-top: 2rem;
+        }
+
+        .learn-more-btn:hover {
+            background: transparent;
+            color: #764ba2;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .contact-label {
+            color: #764ba2;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .contact h2 {
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            color: #333;
+        }
+
+        .contact h2 .highlight {
+            color: #764ba2;
+        }
+
+        .contact-intro {
+            text-align: center;
+            color: #666;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 20px;
+            height: 20px;
+            background: #764ba2;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .contact-details h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-details p {
+            color: #666;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .send-btn {
+            background: #764ba2;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+            justify-self: start;
+        }
+
+        .send-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Enhanced Predict Section */
+        .predict {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .predict-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .predict-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .predict h2 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .predict-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 10px;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-input-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-input-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .preview-container {
+            margin: 20px 0;
+            min-height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .preview-container.has-image {
+            border-color: #667eea;
+            background: white;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-text {
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .predict-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            margin: 20px 0;
+            display: none;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+        }
+
+        .predict-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message, .success-message {
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .error-message {
+            color: #721c24;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-message {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #fff, #f8f9fa);
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-label {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .confidence-badge {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .result-description {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .predictions-detail {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .predictions-detail h4 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .prediction-item:last-child {
+            border-bottom: none;
+        }
+
+        .prediction-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100px;
+            margin-left: 10px;
+        }
+
+        .prediction-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .biodegradable {
+            color: #28a745;
+        }
+
+        .biodegradable .prediction-fill {
+            background: #28a745;
+        }
+
+        .recyclable {
+            color: #17a2b8;
+        }
+
+        .recyclable .prediction-fill {
+            background: #17a2b8;
+        }
+
+        .trash {
+            color: #dc3545;
+        }
+
+        .trash .prediction-fill {
+            background: #dc3545;
+        }
+
+        .info-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .info-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .category-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .category-name {
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .predict-container {
+                padding: 20px;
+            }
+
+            .predict h2 {
+                font-size: 2rem;
+            }
+
+            .category-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .prediction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .prediction-bar {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">MUNICIPAL WASTE CLASSIFICATION</a>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showPage('home')" class="active">Home</a></li>
+                <li><a href="#" onclick="showPage('about')">About</a></li>
+                <li><a href="#" onclick="showPage('predict')">Predict</a></li>
+                <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Welcome to <strong>municipal waste classification</strong></h1>
+                <p>This platform allows you to upload images of waste materials, and our advanced machine learning model will classify them into appropriate categories. Proper waste classification helps in efficient recycling and waste management, making our environment cleaner and more sustainable.</p>
+                <a href="#" class="btn" onclick="showPage('predict')">GET STARTED</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- About Page -->
+    <div id="about" class="page">
+        <section class="about">
+            <div class="container">
+                <div class="about-header">
+                    <div class="about-label">ABOUT</div>
+                    <h2>Learn More <span class="highlight">About Us</span></h2>
+                    <p class="about-intro">GreenGuard Insights is a pioneering organization dedicated to enhancing the efficiency and sustainability of municipal waste management.</p>
+                </div>
+                
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Our team comprises innovative scientists, technologists, and environmental experts committed to leveraging advanced classification technologies to ensure that waste is sorted accurately and managed effectively.</p>
+                        
+                        <ul class="about-features">
+                            <li>Comprehensive analysis and classification of municipal waste based on type and recyclability.</li>
+                            <li>Continuous monitoring of waste processing to ensure efficient recycling and disposal.</li>
+                            <li>Innovative solutions to minimize landfill use by identifying and separating recyclable materials early in the waste management process.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="about-team">
+                        <p>Our team is our greatest asset. We are a diverse group of experts in fields such as environmental science, data analytics, software engineering, and waste management. Together, we bring a wealth of knowledge and experience to tackle the challenges of municipal waste classification and management.</p>
+                        
+                        <a href="#" class="btn learn-more-btn">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Enhanced Predict Page -->
+    <div id="predict" class="page">
+        <section class="predict">
+            <div class="predict-container">
+                <div class="predict-header">
+                    <h2>🗂️ Waste Classifier</h2>
+                    <p class="predict-subtitle">Upload an image to classify waste as Biodegradable, Recyclable, or Trash</p>
+                    <div class="status-badge">🤖 AI Model Active</div>
+                </div>
+
+                <div class="upload-section">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" class="file-input" accept="image/*">
+                        <button class="file-input-button" onclick="document.getElementById('fileInput').click()">
+                            📁 Choose Image
+                        </button>
+                    </div>
+                    
+                    <div class="preview-container" id="previewContainer">
+                        <div class="preview-text">No image selected</div>
+                    </div>
+
+                    <button class="predict-btn" id="predictButton" onclick="classifyWaste()">
+                        🔍 Classify Waste
+                    </button>
+
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing image...</p>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
+                    <div class="success-message" id="successMessage"></div>
+                </div>
+
+                <div class="result-section" id="resultSection">
+                    <div class="result-card">
+                        <div class="result-label" id="resultLabel"></div>
+                        <div class="result-description" id="resultDescription"></div>
+                        <div class="predictions-detail" id="predictionsDetail"></div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Classification Categories:</h3>
+                    <div class="category-info">
+                        <span class="category-name biodegradable">🌱 Biodegradable</span>
+                        <span>Organic waste that decomposes naturally</span>
+                    </div>
+                    <div class="category-info">
+                        <span class="category-name recyclable">♻️ Recyclable</span>
+                        <span>Materials that can be processed and reused</span>
+                    </div>
+                    <div class="category-info">
+                        <span class="category-name trash">🗑️ Trash</span>
+                        <span>Non-recyclable waste for disposal</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contact" class="page">
+        <section class="contact">
+            <div class="container">
+                <div class="contact-header">
+                    <div class="contact-label">CONTACT</div>
+                    <h2>Contact <span class="highlight">Us</span></h2>
+                    <p class="contact-intro">We are here to help you make the best choices for a sustainable environment and effective waste management. Reach out to us for more information about our services, or to learn how we can help you ensure proper classification and disposal of municipal waste.</p>
+                </div>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon"></div>
+                            <div class="contact-details">
+                                <h3>Location:</h3>
+                                <p>Rangampeta<br>East Godavari, 533291</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon"></div>
+                            <div class="contact-details">
+                                <h3>Email:</h3>
+                                <p>nutrigazeOrg@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon"></div>
+                            <div class="contact-details">
+                                <h3>Call:</h3>
+                                <p>+91 5589 554 555</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form class="contact-form" onsubmit="handleSubmit(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" placeholder="Your Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" placeholder="Your Email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" placeholder="Subject" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea placeholder="Message" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="send-btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navigation
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Handle file input change
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleImageUpload(file);
+            }
+        });
+
+        function handleImageUpload(file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showError('Please select a valid image file.');
+                return;
+            }
+
+            // Validate file size (16MB limit)
+            if (file.size > 16 * 1024 * 1024) {
+                showError('File size too large. Please select an image under 16MB.');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Display preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewContainer = document.getElementById('previewContainer');
+                previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" class="preview-image">`;
+                previewContainer.classList.add('has-image');
+                
+                // Show predict button
+                document.getElementById('predictButton').style.display = 'inline-block';
+                hideError();
+                hideSuccess();
+                hideResult();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function classifyWaste() {
+            if (!selectedFile) {
+                showError('Please select an image first.');
+                return;
+            }
+
+            // Show loading
+            showLoading();
+            hideError();
+            hideSuccess();
+            hideResult();
+
+            try {
+                // Create FormData
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                // Send request to Flask backend
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResult(data.result, data.all_predictions);
+                    showSuccess('Classification completed successfully!');
+                } else {
+                    showError(data.error || 'Classification failed.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function showResult(result, allPredictions) {
+            const resultSection = document.getElementById('resultSection');
+            const resultLabel = document.getElementById('resultLabel');
+            const resultDescription = document.getElementById('resultDescription');
+            const predictionsDetail = document.getElementById('predictionsDetail');
+
+            // Set the main result
+            const categoryIcons = {
+                'biodegradable': '🌱',
+                'recyclable': '♻️',
+                'trash': '🗑️'
+            };
+
+            const categoryDescriptions = {
+                'biodegradable': 'This item is biodegradable and can decompose naturally. Consider composting it.',
+                'recyclable': 'This item is recyclable and can be processed for reuse. Please place it in the recycling bin.',
+                'trash': 'This item is non-recyclable waste and should be disposed of in the regular trash bin.'
+            };
+
+            const confidence = Math.round((allPredictions[result] || 0) * 100);
+            
+            resultLabel.innerHTML = `
+                ${categoryIcons[result] || '🗂️'} ${result.toUpperCase()}
+                <span class="confidence-badge">${confidence}% confidence</span>
+            `;
+            resultLabel.className = `result-label ${result}`;
+
+            resultDescription.textContent = categoryDescriptions[result] || 'Classification completed.';
+
+            // Show all predictions
+            let predictionsHTML = '<h4>Detailed Analysis:</h4>';
+            Object.entries(allPredictions).forEach(([category, confidence]) => {
+                const percentage = Math.round(confidence * 100);
+                predictionsHTML += `
+                    <div class="prediction-item ${category}">
+                        <span>${categoryIcons[category]} ${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span>${percentage}%</span>
+                            <div class="prediction-bar">
+                                <div class="prediction-fill" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            predictionsDetail.innerHTML = predictionsHTML;
+            resultSection.style.display = 'block';
+
+            // Scroll to result
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('predictButton').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('predictButton').disabled = false;
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+        }
+
+        function hideSuccess() {
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function hideResult() {
+            document.getElementById('resultSection').style.display = 'none';
+        }
+
+        // Handle contact form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Simulate form submission
+            const submitButton = event.target.querySelector('.send-btn');
+            const originalText = submitButton.textContent;
+            
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            
+            setTimeout(() => {
+                alert('Message sent successfully! We will get back to you soon.');
+                event.target.reset();
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }, 2000);
+        }
+
+        // Demo mode - simulate classification without backend
+        async function classifyWasteDemo() {
+            if (!selectedFile) {
+                showError('Please select an image first.');
+                return;
+            }
+
+            showLoading();
+            hideError();
+            hideSuccess();
+            hideResult();
+
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            try {
+                // Demo predictions (randomized for demonstration)
+                const categories = ['biodegradable', 'recyclable', 'trash'];
+                const randomResult = categories[Math.floor(Math.random() * categories.length)];
+                
+                const demoResults = {
+                    biodegradable: Math.random() * 0.4 + 0.1,
+                    recyclable: Math.random() * 0.4 + 0.1,
+                    trash: Math.random() * 0.4 + 0.1
+                };
+                
+                // Make the selected category have higher confidence
+                demoResults[randomResult] = Math.random() * 0.3 + 0.7;
+                
+                // Normalize to ensure they add up to 1
+                const total = Object.values(demoResults).reduce((a, b) => a + b, 0);
+                Object.keys(demoResults).forEach(key => {
+                    demoResults[key] = demoResults[key] / total;
+                });
+
+                showResult(randomResult, demoResults);
+                showSuccess('Classification completed successfully! (Demo mode)');
+            } catch (error) {
+                showError('Demo classification failed. Please try again.');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Switch between real API and demo mode
+        let demoMode = true; // Set to false when you have a backend API
+
+        function classifyWaste() {
+            if (demoMode) {
+                classifyWasteDemo();
+            } else {
+                classifyWasteAPI();
+            }
+        }
+
+        // Real API classification (for when backend is available)
+        async function classifyWasteAPI() {
+            if (!selectedFile) {
+                showError('Please select an image first.');
+                return;
+            }
+
+            showLoading();
+            hideError();
+            hideSuccess();
+            hideResult();
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResult(data.result, data.all_predictions);
+                    showSuccess('Classification completed successfully!');
+                } else {
+                    showError(data.error || 'Classification failed.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showError('Backend server is not available. Running in demo mode.');
+                    // Fallback to demo mode
+                    setTimeout(() => classifyWasteDemo(), 1000);
+                } else {
+                    showError('Network error. Please try again.');
+                }
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Drag and drop functionality
+        function initializeDragAndDrop() {
+            const previewContainer = document.getElementById('previewContainer');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                previewContainer.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                previewContainer.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                previewContainer.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                previewContainer.style.borderColor = '#667eea';
+                previewContainer.style.backgroundColor = '#f0f4ff';
+            }
+
+            function unhighlight(e) {
+                previewContainer.style.borderColor = '#ddd';
+                previewContainer.style.backgroundColor = '#f9f9f9';
+            }
+
+            previewContainer.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    handleImageUpload(files[0]);
+                }
+            }
+        }
+
+        // Initialize drag and drop when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDragAndDrop();
+            
+            // Update preview container text to indicate drag and drop
+            const previewContainer = document.getElementById('previewContainer');
+            const currentText = previewContainer.querySelector('.preview-text');
+            if (currentText) {
+                currentText.textContent = 'No image selected - Click "Choose Image" or drag and drop an image here';
+            }
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // Clear current selection and results
+                selectedFile = null;
+                document.getElementById('previewContainer').innerHTML = '<div class="preview-text">No image selected</div>';
+                document.getElementById('previewContainer').classList.remove('has-image');
+                document.getElementById('predictButton').style.display = 'none';
+                hideResult();
+                hideError();
+                hideSuccess();
+            }
+        });
+
+        // Add smooth scrolling for navigation
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetPage = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                showPage(targetPage);
+            });
+        });
+
+        // Utility function to format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Add file info display
+        function displayFileInfo(file) {
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info';
+            fileInfo.innerHTML = `
+                <small style="color: #666; margin-top: 10px; display: block;">
+                    📄 ${file.name} (${formatFileSize(file.size)})
+                </small>
+            `;
+            
+            const previewContainer = document.getElementById('previewContainer');
+            const existingInfo = previewContainer.querySelector('.file-info');
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+            previewContainer.appendChild(fileInfo);
+        }
+
+        // Enhanced image upload handler
+        function handleImageUpload(file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showError('Please select a valid image file (JPG, PNG, GIF, etc.).');
+                return;
+            }
+
+            // Validate file size (16MB limit)
+            if (file.size > 16 * 1024 * 1024) {
+                showError(`File size too large (${formatFileSize(file.size)}). Please select an image under 16MB.`);
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Display preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewContainer = document.getElementById('previewContainer');
+                previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" class="preview-image">`;
+                previewContainer.classList.add('has-image');
+                
+                // Add file info
+                displayFileInfo(file);
+                
+                // Show predict button with animation
+                const predictButton = document.getElementById('predictButton');
+                predictButton.style.display = 'inline-block';
+                predictButton.style.opacity = '0';
+                predictButton.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    predictButton.style.transition = 'all 0.3s ease';
+                    predictButton.style.opacity = '1';
+                    predictButton.style.transform = 'translateY(0)';
+                }, 100);
+                
+                hideError();
+                hideSuccess();
+                hideResult();
+            };
+            
+            reader.onerror = function() {
+                showError('Error reading the image file. Please try again.');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        </script>
+</body>
+</html>
