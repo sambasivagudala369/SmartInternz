@@ -1,56 +1,62 @@
 # 🗑️ Waste Classifier using VGG16
 
-This project is a deep learning-based waste classification system that uses transfer learning with the **VGG16** model to identify types of waste such as **Biodegradable**, **Recyclable**, and **Trash**.
+A Deep Learning-based Waste Classification system that uses **VGG16** for identifying types of waste (e.g., recyclable, biodegradable, trash). The model is deployed with a lightweight **HTML, CSS, and JavaScript** frontend for ease of use and accessibility.
 
-## 🧠 Key Features
+---
 
-- ✅ Transfer learning with pre-trained VGG16
-- 📂 Classifies waste into 3 categories
-- 📸 Image preprocessing and augmentation
-- 📊 Model evaluation on test dataset
-- 💾 Trained model saved as `waste_classifier_vgg16.h5`
+## 📌 Project Overview
 
-## 📁 Dataset Structure
+This project uses **transfer learning** with the pre-trained **VGG16** model to classify waste images into three useful categories. It aims to support eco-friendly practices by simplifying waste management and encouraging proper disposal.
 
-Ensure your dataset is organized as:
+### 🚀 Features
 
-output_dataset/
-├── train/
-│ ├── Biodegradable Images/
-│ ├── Recyclable Images/
-│ └── Trash Images/
-├── val/
-│ ├── Biodegradable Images/
-│ ├── Recyclable Images/
-│ └── Trash Images/
-└── test/
-├── Biodegradable Images/
-├── Recyclable Images/
-└── Trash Images/
+- 🌐 Web-based interface using HTML, CSS, and JavaScript
+- 🤖 Deep Learning model (VGG16) for image classification
+- 📷 Upload or capture image for real-time prediction
+- 📊 Displays prediction result and confidence score
+- ♻️ Supports recyclable, biodegradable, and trash categories
 
+---
 
+## 🧠 Model Details
 
-## 🛠️ Requirements
+- **Base Model**: VGG16 (pre-trained on ImageNet)
+- **Fine-Tuned**: Last few layers retrained on the custom waste dataset
+- **Output Classes**:
+  - Recyclable
+  - Biodegradable
+  - Trash
 
-- Python 3.x
-- TensorFlow
-- NumPy
-- IPython (for displaying images)
+---
 
-Install dependencies:
+## 📁 Dataset Used
 
-```bash
-pip install tensorflow numpy ipython
+We used a publicly available dataset from Kaggle for training the VGG16 model.
 
-## 🛠️ Requirements
+📦 **Dataset**: [Municipal Solid Waste Dataset – Kaggle](https://www.kaggle.com/datasets/elinachen717/municipal-solid-waste-dataset)
 
-- Python 3.x
-- TensorFlow
-- NumPy
-- IPython (for displaying images)
+This dataset contains images of waste categorized into multiple classes including:
+- Biodegradable Waste
+- Glass
+- Metal
+- Paper
+- Plastic
+- Textile
+- Others
 
-Install dependencies:
+We regrouped them into 3 categories for our use case:
+- **Recyclable** → Paper, Plastic, Glass, Metal  
+- **Biodegradable** → Biodegradable Waste  
+- **Trash** → Textile, Others, and anything not recyclable or biodegradable
 
-```bash
-pip install tensorflow numpy ipython
+---
 
+## 💻 How to Run the Project
+
+### 🔧 Option 1: Run Locally
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/sambasivagudala369/waste-classifier-vgg16.git
+   cd waste-classifier-vgg16
