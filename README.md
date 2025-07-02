@@ -62,3 +62,5 @@ We regrouped them into 3 categories for our use case:
    cd waste-classifier-vgg16
 
 ![image](https://github.com/user-attachments/assets/21815183-c758-4c59-ba1d-24ca15c4aba2)
+
+## Demo Link : https://drive.google.com/file/d/1WdZ4C9mNzsmMvDdCgeTCB27QUu6M-tUw/view?usp=sharing
