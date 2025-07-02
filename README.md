@@ -60,3 +60,5 @@ We regrouped them into 3 categories for our use case:
    ```bash
    git clone https://github.com/sambasivagudala369/waste-classifier-vgg16.git
    cd waste-classifier-vgg16
+
+![image](https://github.com/user-attachments/assets/21815183-c758-4c59-ba1d-24ca15c4aba2)
